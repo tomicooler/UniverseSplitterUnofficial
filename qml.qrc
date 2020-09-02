@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>qtquickcontrols2.conf</file>
         <file>appicon.png</file>
+        <file>InfoDialog.qml</file>
     </qresource>
 </RCC>
