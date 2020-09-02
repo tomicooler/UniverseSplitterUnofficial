@@ -1,21 +1,76 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls.Material 2.15
 
 ApplicationWindow {
+    id: root
     width: 640
     height: 480
     visible: true
     title: qsTr("Universe Splitter Unofficial")
 
-    ScrollView {
-        anchors.fill: parent
+    header: ToolBar {
+        Label {
+            text: root.title
+            anchors.centerIn: parent
+        }
+    }
 
-        ListView {
-            width: parent.width
-            model: 20
-            delegate: ItemDelegate {
-                text: "Item " + (index + 1)
-                width: parent.width
+    ColumnLayout {
+        anchors.centerIn: parent
+        spacing: 6
+
+        Label {
+            Layout.fillWidth: true
+            font.pointSize: 24
+            text: qsTr("Quantum Decision Maker")
+            horizontalAlignment: Label.AlignHCenter
+        }
+
+        Item {
+            height: 20
+        }
+
+        Label {
+            text: qsTr("In one Universe, I will now:")
+        }
+        TextField {
+            id: actionOne
+            Layout.fillWidth: true
+            placeholderText: qsTr("hop left")
+            selectByMouse: true
+        }
+
+        Label {
+            text: qsTr("In the other one, I will now:")
+        }
+        TextField {
+            id: actionAnother
+            Layout.fillWidth: true
+            placeholderText: qsTr("hop right")
+            selectByMouse: true
+        }
+
+        Item {
+            height: 20
+        }
+
+        RoundButton {
+            id: splitButton
+
+            Material.foreground: Material.Green
+            Layout.alignment: Qt.AlignHCenter
+
+            font.pointSize: 48
+            text: qsTr(" Ψ ")
+            enabled: actionOne.text.length > 0 && actionAnother.text.length > 0
+
+            BusyIndicator {
+                id: busy
+                visible: running
+                running: false
+                anchors.fill: parent
             }
         }
     }
