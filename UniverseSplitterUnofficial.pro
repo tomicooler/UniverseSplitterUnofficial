@@ -36,3 +36,4 @@ DISTFILES += \
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
+android: include($$(HOME)/android/android_openssl/openssl.pri)

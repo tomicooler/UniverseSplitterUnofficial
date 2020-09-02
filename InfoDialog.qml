@@ -3,9 +3,17 @@ import QtQuick.Controls 2.15
 
 Item {
 
+    property string content: ""
+
+    function displayRichDialog(title, details) {
+        richDialog.title = title;
+        content = details;
+        richDialog.open();
+    }
+
     function displayDialog(title, details) {
         dialog.title = title;
-        dialog.details = details;
+        content = details.substring(0, 50);
         dialog.open();
     }
 
@@ -13,12 +21,31 @@ Item {
         id: dialog
 
         width: parent.width * 0.8
+        height: parent.height * 0.4
+        x: (parent.width - width) / 2
+        y: (parent.height - height) / 2
+
+        standardButtons: Dialog.Ok
+
+        Label {
+            anchors.centerIn: parent
+            text: content
+            wrapMode: Label.Wrap
+            verticalAlignment: Label.AlignVCenter
+            textFormat: Text.PlainText
+            font.pointSize: 24
+        }
+    }
+
+    Dialog {
+        id: richDialog
+
+        width: parent.width * 0.8
         height: parent.height * 0.8
         x: (parent.width - width) / 2
         y: (parent.height - height) / 2
 
         standardButtons: Dialog.Ok
-        property string details: ""
 
         ScrollView {
             id: scroll
@@ -30,23 +57,15 @@ Item {
             Label {
                 id: label
                 width: dialog.width - 80
-                text: dialog.details
+                text: content
                 wrapMode: Label.Wrap
                 verticalAlignment: Label.AlignVCenter
+                textFormat: Text.RichText
 
                 onLinkActivated: {
                     Qt.openUrlExternally(link);
                 }
-
-                Component.onCompleted: {
-                    let minHeight = dialog.height - 80;
-                    if (height < minHeight) {
-                        height = minHeight;
-                    }
-                }
             }
         }
-
     }
-
 }
