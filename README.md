@@ -25,8 +25,15 @@ DISCLAIMER: use at your own risk, don't blame the application (or me) for your "
 Unfortunately the <a href="https://apps.apple.com/us/app/universe-splitter/id329233299">Official Application</a> is not available on android, so I decided to make a similar one.
 
 
+## Downloads
+
+ - <a href="https://play.google.com/store/apps/details?id=com.tomicooler.universe.splitter.unofficial">Google Play</a>
+
+ - <a href="https://www.youtube.com/watch?v=5dHhyCgOvik">Video</a>
+
+
 ## Inspiration
 
- - Sean Carroll's new book <a href="https://www.amazon.com/Something-Deeply-Hidden-Emergence-Spacetime/dp/1524743011">Something deeply hidden</a>
+ - Sean Carroll's new book <a href="https://www.amazon.com/Something-Deeply-Hidden-Emergence-Spacetime/dp/1524743011">Something deeply hidden</a>.
 
  - <a href="https://www.youtube.com/watch?v=HI09kat_GeI&list=PLrxfgDEc2NxZJcWcrxH3jyjUUrJlnoyzX">The Biggest Ideas in The Universe</a> YouTube series.
