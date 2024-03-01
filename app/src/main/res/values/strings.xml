@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Universe Splitter Unofficial</string>
+    <string name="action">Universe has been split, DO:</string>
+    <string name="error">Error</string>
+    <string name="quantum_decision_maker">Quantum Decision Maker</string>
+    <string name="in_one_universe_i_will_now">In one Universe, I will now:</string>
+    <string name="hop_left">hop left</string>
+    <string name="in_the_other_one_i_will_now">In the other one, I will now:</string>
+    <string name="hope_right">hope right</string>
+    <string name="split_the_universe_button">Split the Universe Button</string>
+</resources>
