@@ -6,7 +6,7 @@ tomicooler, (“Company“, “we“, “our” or “us“) understands the imp
 Do we collect Personally Identifiable Information?
 --------------------------------------------------
 
-We **do not** collect any PII from Universe Splitter Unofficial application. [The ANU Quantum Random Numbers Server](http://qrng.anu.edu.au/index.php) is used to generate the quantum random numbers.
+We **do not** collect any PII from Universe Splitter Unofficial application. [ETHZürich](http://qrng.ethz.ch/) Quantum RNG for OpenQu is used to generate the quantum random numbers.
 
 Permissions used in Universe Splitter Unofficial:
 -------------------------------------------------

@@ -75,3 +75,6 @@ Thumbs.db
 
 # clang
 .clang-format
+
+.idea/*
+.gradle/*

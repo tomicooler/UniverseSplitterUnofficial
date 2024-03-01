@@ -7,7 +7,7 @@
 According to the Many Worlds Interpretation of quantum mechanics, every possible outcome of a quantum experiment happens.
 If your decision relies on the outcome of the quantum experiment, there will be many versions of you that make different decisions.
 
-<a href="http://qrng.anu.edu.au/index.php">The ANU Quantum Random Numbers Server</a> is used to generate a random number, hence branching the universe.
+[ETHZürich](http://qrng.ethz.ch/) Quantum RNG for OpenQu is used to generate a random number, hence branching the universe.
 
 
 ## Rules of the game
@@ -22,18 +22,18 @@ DISCLAIMER: use at your own risk, don't blame the application (or me) for your "
 
 ## Original Application
 
-Unfortunately the <a href="https://apps.apple.com/us/app/universe-splitter/id329233299">Official Application</a> is not available on android, so I decided to make a similar one.
+Unfortunately the [Official Application](https://apps.apple.com/us/app/universe-splitter/id329233299) is not available on android, so I decided to make a similar one.
 
 
 ## Downloads
 
- - <a href="https://play.google.com/store/apps/details?id=com.tomicooler.universe.splitter.unofficial">Google Play</a>
+ - [Google Play](https://play.google.com/store/apps/details?id=com.tomicooler.universe.splitter.unofficial)
 
- - <a href="https://www.youtube.com/watch?v=5dHhyCgOvik">Video</a>
+ - [Video](https://www.youtube.com/watch?v=5dHhyCgOvik)
 
 
 ## Inspiration
 
- - Sean Carroll's new book <a href="https://www.amazon.com/Something-Deeply-Hidden-Emergence-Spacetime/dp/1524743011">Something deeply hidden</a>.
+ - Sean Carroll's new book [Something deeply hidden](https://www.amazon.com/Something-Deeply-Hidden-Emergence-Spacetime/dp/1524743011).
 
- - <a href="https://www.youtube.com/watch?v=HI09kat_GeI&list=PLrxfgDEc2NxZJcWcrxH3jyjUUrJlnoyzX">The Biggest Ideas in The Universe</a> YouTube series.
+ - [The Biggest Ideas in The Universe](https://www.youtube.com/watch?v=HI09kat_GeI&list=PLrxfgDEc2NxZJcWcrxH3jyjUUrJlnoyzX) YouTube series.
