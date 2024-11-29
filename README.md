@@ -7,7 +7,12 @@
 According to the Many Worlds Interpretation of quantum mechanics, every possible outcome of a quantum experiment happens.
 If your decision relies on the outcome of the quantum experiment, there will be many versions of you that make different decisions.
 
-[ETHZürich](http://qrng.ethz.ch/) Quantum RNG for OpenQu is used to generate a random number, hence branching the universe.
+Quantum Generator backends:
+ - [qrandom](https://qrandom.io/)
+ - [CamachoLab](https://camacholab.byu.edu/qrng">CamachoLab): server configuration issue, certificate is not trusted on on android
+ - [ANU](https://qrng.anu.edu.au/): throttled, 1 request / minute
+
+Quantum Random Number Generator is used to generate a random number, hence branching the universe.
 
 
 ## Rules of the game
