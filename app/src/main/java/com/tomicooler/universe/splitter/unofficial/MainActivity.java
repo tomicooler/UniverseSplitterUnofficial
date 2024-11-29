@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
         // TODO: better abstraction
         anuSplitter = new ANUWorldSplitter(lastUseAnuMillis);
-        splitters.add(new Splitter(new ETHZurichWorldSplitter(), findViewById(R.id.radio_ethzurich)));
+        splitters.add(new Splitter(new QRandomWorldSplitter(), findViewById(R.id.radio_qrandom)));
         splitters.add(new Splitter(new CamachoLabWorldSplitter(), findViewById(R.id.radio_camacho)));
         splitters.add(new Splitter(anuSplitter, findViewById(R.id.radio_anu)));
         for (Splitter splitter : splitters) {
