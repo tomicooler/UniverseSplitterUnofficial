@@ -13,41 +13,68 @@ import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private static final String STATE_WELCOME_HAS_BEEN_SHOWN = "WELCOME_HAS_BEEN_SHOWN";
+    private static final String STATE_ANU_LAST_USE_MILLIS = "ANU_LAST_USE_MILLIS";
+    private static final long ONE_MINUTE = 60 * 1000;
+
+    private final ExecutorService executor = Executors.newFixedThreadPool(3);
     private final Handler handler = new Handler(Looper.getMainLooper());
     private ImageButton button;
     private EditText optionA;
     private EditText optionB;
     private AlertDialog dialog;
     private boolean welcomeHasBeenShown = false;
+    private final List<Splitter> splitters = new ArrayList<>();
+    private Splitter activeSplitter = null;
+
+    private ANUWorldSplitter anuSplitter = null;
+
+    private static class Splitter {
+        WorldSplitter splitter;
+        RadioButton button;
+
+        Splitter(WorldSplitter splitter, RadioButton button) {
+            this.splitter = splitter;
+            this.button = button;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        long lastUseAnuMillis = 0;
         if (savedInstanceState != null) {
-            welcomeHasBeenShown = savedInstanceState.getBoolean("WELCOME_HAS_BEEN_SHOWN", false);
+            welcomeHasBeenShown = savedInstanceState.getBoolean(STATE_WELCOME_HAS_BEEN_SHOWN, false);
+            lastUseAnuMillis = savedInstanceState.getLong(STATE_ANU_LAST_USE_MILLIS, 0);
         }
         if (!welcomeHasBeenShown) {
             showWelcomeDialog();
             welcomeHasBeenShown = true;
+        }
+
+        // TODO: better abstraction
+        anuSplitter = new ANUWorldSplitter(lastUseAnuMillis);
+        splitters.add(new Splitter(new ETHZurichWorldSplitter(), findViewById(R.id.radio_ethzurich)));
+        splitters.add(new Splitter(new CamachoLabWorldSplitter(), findViewById(R.id.radio_camacho)));
+        splitters.add(new Splitter(anuSplitter, findViewById(R.id.radio_anu)));
+        for (Splitter splitter : splitters) {
+            splitter.button.setEnabled(false);
         }
 
         optionA = findViewById(R.id.optionA);
@@ -70,17 +97,26 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                button.setEnabled(optionA.getText().length() > 0 && optionB.getText().length() > 0);
+                setSplitButtonEnable();
             }
         };
 
         optionA.addTextChangedListener(tw);
         optionB.addTextChangedListener(tw);
+
+        RadioGroup group = findViewById(R.id.radio_group);
+        group.setOnCheckedChangeListener((group1, checkedId) -> setSplitButtonEnable());
+
+        setAvailableBackends();
+        if ((System.currentTimeMillis() - lastUseAnuMillis) < ONE_MINUTE) {
+            setAvailableBackend(splitters.get(2), ONE_MINUTE + 5 * 1000);
+        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean("WELCOME_HAS_BEEN_SHOWN", welcomeHasBeenShown);
+        outState.putBoolean(STATE_WELCOME_HAS_BEEN_SHOWN, welcomeHasBeenShown);
+        outState.putLong(STATE_ANU_LAST_USE_MILLIS, anuSplitter.getLastUseMillis());
         super.onSaveInstanceState(outState);
     }
 
@@ -116,93 +152,95 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setEnable(boolean enable) {
-        button.setEnabled(enable);
         optionA.setEnabled(enable);
         optionB.setEnabled(enable);
+        setSplitButtonEnable();
+    }
+
+    private void setSplitButtonEnable() {
+        resetActiveSplitter();
+        button.setEnabled(optionA.getText().length() > 0 && optionB.getText().length() > 0 && activeSplitter != null);
+    }
+
+    private void resetActiveSplitter() {
+        activeSplitter = null;
+        for (Splitter splitter : splitters) {
+            if (splitter.button.isEnabled() && splitter.button.isChecked()) {
+                activeSplitter = splitter;
+                return;
+            }
+        }
     }
 
     private void splitTheWorld() {
+        if (activeSplitter == null) {
+            button.setEnabled(false);
+            return;
+        }
+
         executor.execute(() -> {
-            final Response response = quantumAorB();
+            String err = "";
+            WorldSplitter.World w = WorldSplitter.World.A;
+            try {
+                w = activeSplitter.splitter.split();
+            } catch (WorldSplitException e) {
+                err = e.getMessage();
+            }
+
+            final String error = err;
+            final WorldSplitter.World world = w;
             handler.post(() -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                switch (response.result) {
-                    case A:
-                        builder.setTitle(R.string.action);
-                        builder.setMessage(optionA.getText());
-                        break;
-                    case B:
-                        builder.setTitle(R.string.action);
-                        builder.setMessage(optionB.getText());
-                        break;
-                    case Error:
-                        builder.setTitle(R.string.error);
-                        builder.setMessage(response.error);
-                        break;
+                if (error != null && !error.isEmpty()) {
+                    builder.setTitle(R.string.error);
+                    builder.setMessage(error);
+                } else {
+                    switch (world) {
+                        case A:
+                            builder.setTitle(R.string.action);
+                            builder.setMessage(optionA.getText());
+                            break;
+                        case B:
+                            builder.setTitle(R.string.action);
+                            builder.setMessage(optionB.getText());
+                            break;
+                    }
                 }
                 dialog = builder.create();
                 dialog.show();
+                if (activeSplitter.splitter.throttled()) {
+                    activeSplitter.button.setEnabled(false);
+                    setAvailableBackend(activeSplitter, ONE_MINUTE + 5 * 1000);
+                }
                 setEnable(true);
             });
         });
     }
 
-    static final class Response {
-        enum Result {
-            A, B, Error,
-        }
-
-        Result result;
-        String error;
-
-        public Response(Result result, String error) {
-            this.result = result;
-            this.error = error;
+    private void setAvailableBackends() {
+        for (int i = 0; i < splitters.size(); i++) {
+            final int index = i;
+            executor.execute(() -> {
+                final Splitter splitter = splitters.get(index);
+                setAvailableBackend(splitter, 0);
+            });
         }
     }
 
-    private Response quantumAorB() {
-        try {
-            final URL url = new URL("http://qrng.ethz.ch/api/randint?min=0&max=1&size=1");
-            // Valid responses:
-            //   {"result": [0]}
-            //   {"result": [1]}
-            final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setConnectTimeout(5 * 1000); // 5 seconds
-            try {
-                final InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                final BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-                final StringBuilder builder = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    builder.append(line);
+    private void setAvailableBackend(final Splitter splitter, final long initialDelay) {
+        executor.execute(() -> {
+            if (initialDelay > 0) {
+                try {
+                    Thread.sleep(initialDelay);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                final JSONObject jsonObject = new JSONObject(builder.toString());
-
-                // Response validation
-                final Object result = jsonObject.get("result");
-                if (!(result instanceof JSONArray)) {
-                    return new Response(Response.Result.Error, "result must be an array");
-                }
-
-                final JSONArray array = (JSONArray) result;
-                if (array.length() != 1) {
-                    return new Response(Response.Result.Error, "result array must contain exactly 1 element");
-                }
-
-                final int value = array.getInt(0);
-                if (value < 0 || value > 1) {
-                    return new Response(Response.Result.Error, "element must be either 0 or 1");
-                }
-
-                // Valid response
-                return new Response(value == 1 ? Response.Result.A : Response.Result.B, "");
-            } finally {
-                urlConnection.disconnect();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Response(Response.Result.Error, e.getMessage());
-        }
+            final boolean available = splitter.splitter.available();
+            handler.post(() -> {
+                splitter.button.setEnabled(available);
+                setSplitButtonEnable();
+            });
+        });
     }
 }
