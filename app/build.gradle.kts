@@ -9,9 +9,9 @@ android {
     defaultConfig {
         applicationId = "com.tomicooler.universe.splitter.unofficial"
         minSdk = 29
-        versionCode = 4
-        versionName = "1.4"
         targetSdk = 36
+        versionCode = 5
+        versionName = "1.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
